@@ -1,2 +1,4 @@
 # alibre-HOOPS-addon
-Learning HOOPS visualize and On3DRender methods
+
+Learning HOOPS visualize and On3DRender methods.
+
