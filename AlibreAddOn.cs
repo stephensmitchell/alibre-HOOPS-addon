@@ -1,5 +1,4 @@
-﻿#nullable enable // Enable nullable context for better code analysis
-
+﻿#nullable enable 
 using AlibreAddOn;
 using AlibreX;
 using System;
@@ -11,50 +10,41 @@ using System.Text;
 using System.Windows.Controls.Ribbon;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
-
 namespace AlibreAddOnAssembly
 {
     public static class AlibreAddOn
     {
         private static IADRoot? AlibreRoot { get; set; }
         private static AddOnRibbon? _addon;
-
         public static void AddOnLoad(IntPtr hwnd, IAutomationHook pAutomationHook, IntPtr _)
         {
             if (Environment.GetEnvironmentVariable("ALIBRE_DISABLE_SKIN") == "1") return;
-
             AlibreRoot = (IADRoot)pAutomationHook.Root;
             _addon = new AddOnRibbon(AlibreRoot);
-
             NativeUiHider.SetNativeUiVisibility(hwnd, false);
             WpfOverlay.Attach(hwnd, _addon);
         }
-
         public static void AddOnUnload(IntPtr hwnd, bool _, ref bool __, int ___, int ____)
         {
             WpfOverlay.Detach();
             NativeUiHider.SetNativeUiVisibility(hwnd, true);
-
             _addon = null;
             AlibreRoot = null;
         }
-
         public static IAlibreAddOn? GetAddOnInterface() => _addon;
         public static IADRoot? GetRoot() => AlibreRoot;
-        public static void AddOnInvoke(IntPtr _, IntPtr __, string ___, bool ____, int _____, int ______) { }
+        public static void AddOnInvoke(IntPtr _, IntPtr __, string ___, bool ____, int _____, int ______)
+        { }
     }
-
     public class AddOnRibbon : IAlibreAddOn
     {
         private readonly MenuManager _mgr;
         public IADSession Session { get; }
-
         public AddOnRibbon(IADRoot root)
         {
             Session = root.TopmostSession;
             _mgr = new MenuManager();
         }
-
         public int RootMenuItem => _mgr.Root.Id;
         public IAlibreAddOnCommand? InvokeCommand(int id, string _) => _mgr[id]?.Cmd?.Invoke(Session);
         public bool HasSubMenus(int id) => _mgr[id]?.Subs.Count > 0;
@@ -65,12 +55,13 @@ namespace AlibreAddOnAssembly
         public string? MenuIcon(int id) => _mgr[id]?.Icon;
         public bool PopupMenu(int _) => false;
         public bool HasPersistentDataToSave(string _) => false;
-        public void SaveData(System.Runtime.InteropServices.ComTypes.IStream _, string __) { }
-        public void LoadData(System.Runtime.InteropServices.ComTypes.IStream _, string __) { }
-
+        public void SaveData(System.Runtime.InteropServices.ComTypes.IStream _, string __)
+        { }
+        public void LoadData(System.Runtime.InteropServices.ComTypes.IStream _, string __)
+        { }
         public bool UseDedicatedRibbonTab() => false;
-        public void setIsAddOnLicensed(bool _) { }
-
+        public void setIsAddOnLicensed(bool _)
+        { }
         public void LoadData(global::AlibreAddOn.IStream pCustomData, string sessionIdentifier)
         {
             throw new NotImplementedException();
@@ -81,7 +72,6 @@ namespace AlibreAddOnAssembly
         }
         public MenuManager Manager => _mgr;
     }
-
     #region Menu Data
     public class MenuItemData(int id, string text, string? tip = null, string? icon = null, Func<IADSession, IAlibreAddOnCommand>? cmd = null)
     {
@@ -92,18 +82,13 @@ namespace AlibreAddOnAssembly
         public Func<IADSession, IAlibreAddOnCommand>? Cmd { get; } = cmd;
         public List<MenuItemData> Subs { get; } = [];
     }
-
     public class MenuManager
     {
         private readonly Dictionary<int, MenuItemData> _dict = [];
         public MenuItemData Root { get; }
-
         public MenuManager()
         {
-            // Initialize the root menu item
             Root = new MenuItemData(401, "HOOPS Commands");
-
-            // Add commands 1 through 9 as sub-items to the root
             Root.Subs.AddRange(new[]
             {
         new MenuItemData(9021, "cmd1", "cmd1", null, s => new cmd1()),
@@ -114,28 +99,25 @@ namespace AlibreAddOnAssembly
         new MenuItemData(9026, "cmd6", "cmd6", null, s => new cmd6()),
         new MenuItemData(9027, "cmd7", "cmd7", null, s => new cmd7()),
         new MenuItemData(9028, "cmd8", "cmd8", null, s => new cmd8()),
-        new MenuItemData(9029, "cmd9", "cmd9", null, s => new cmd9())
+    new MenuItemData(9029, "cmd9", "cmd9", null, s => new cmd9()),
+                    new MenuItemData(9030, "cmd10", "cmd10", null, s => new cmd10()),
+                    new MenuItemData(9031, "cmd11", "cmd11", null, s => new cmd11()),
+                    new MenuItemData(9032, "cmd12", "cmd12", null, s => new cmd12())
     });
-
-            // Register the entire menu structure
             Register(Root);
         }
-
         private void Register(MenuItemData m)
         {
             _dict[m.Id] = m;
             foreach (var c in m.Subs) Register(c);
         }
-
         public MenuItemData? this[int id] => _dict.TryGetValue(id, out var m) ? m : null;
     }
-    #endregion
-
+    #endregion Menu Data
     #region WPF Overlay
     internal static class WpfOverlay
     {
         private static ElementHost? _host;
-
         public static void Attach(IntPtr parentHwnd, AddOnRibbon addon)
         {
             if (_host != null) return;
@@ -149,7 +131,6 @@ namespace AlibreAddOnAssembly
             var parent = System.Windows.Forms.Control.FromHandle(parentHwnd);
             parent?.Controls.Add(_host);
         }
-
         public static void Detach()
         {
             if (_host == null) return;
@@ -157,7 +138,6 @@ namespace AlibreAddOnAssembly
             _host.Dispose();
             _host = null;
         }
-
         private static Ribbon BuildRibbon(AddOnRibbon addon)
         {
             var ribbon = new Ribbon();
@@ -175,14 +155,12 @@ namespace AlibreAddOnAssembly
             return ribbon;
         }
     }
-    #endregion
-
+    #endregion WPF Overlay
     #region Native UI hider
     internal static class NativeUiHider
     {
         private const int SW_HIDE = 0;
         private const int SW_SHOW = 5;
-
         private delegate bool EnumProc(IntPtr hWnd, IntPtr lParam);
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool EnumChildWindows(IntPtr hWndParent, EnumProc lpEnumFunc, IntPtr lParam);
@@ -190,7 +168,6 @@ namespace AlibreAddOnAssembly
         private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
         [DllImport("user32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
         public static void SetNativeUiVisibility(IntPtr main, bool show)
         {
             EnumChildWindows(main, (h, _) =>
@@ -206,33 +183,36 @@ namespace AlibreAddOnAssembly
             }, IntPtr.Zero);
         }
     }
-    #endregion
-
+    #endregion Native UI hider
     #region Dummy Command
     public class DummyCommand(IADSession session) : IAlibreAddOnCommand
     {
         private readonly IADSession _session = session;
-
         public void OnShowUI(long _) => System.Windows.MessageBox.Show($"Dummy command executed in session: {_session.Name}");
         public bool AddTab() => false;
         public string? TabName => null;
         public Array? Extents => null;
         public IADAddOnCommandSite? CommandSite { get; set; }
-        public void On3DRender() { }
-        public void OnRender(int _, int __, int ___, int ____, int _____) { }
-        public void OnComplete() { }
-        public void OnTerminate() { }
+        public void On3DRender()
+        { }
+        public void OnRender(int _, int __, int ___, int ____, int _____)
+        { }
+        public void OnComplete()
+        { }
+        public void OnTerminate()
+        { }
         public bool IsTwoWayToggle() => false;
         public bool OnClick(int _, int __, ADDONMouseButtons ___) => false;
         public bool OnDoubleClick(int _, int __) => false;
         public bool OnMouseDown(int _, int __, ADDONMouseButtons ___) => false;
         public bool OnMouseMove(int _, int __, ADDONMouseButtons ___) => false;
         public bool OnMouseUp(int _, int __, ADDONMouseButtons ___) => false;
-        public void OnSelectionChange() { }
+        public void OnSelectionChange()
+        { }
         public bool OnKeyDown(int _) => false;
         public bool OnKeyUp(int _) => false;
         public bool OnEscape() => false;
         public bool OnMouseWheel(double _) => false;
     }
-    #endregion
+    #endregion Dummy Command
 }

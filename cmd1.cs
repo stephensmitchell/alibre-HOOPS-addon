@@ -4,20 +4,17 @@ public class cmd1 : IAlibreAddOnCommand
 {
     private IADAddOnCommandSite commandSite;
     private bool isOutOfDate = true;
-
     public IADAddOnCommandSite CommandSite
     {
         get => commandSite;
         set => commandSite = value;
     }
-
     public void putref_CommandSite(IADAddOnCommandSite pSite)
     {
         commandSite = pSite;
         if (commandSite.LegacyRenderingEngine())
             throw new InvalidOperationException("HOOPS");
     }
-
     public void On3DRender()
     {
         if (!isOutOfDate) return;
@@ -39,13 +36,9 @@ public class cmd1 : IAlibreAddOnCommand
         canvas.SetSegmentTransform(segment, true, ref transform);
         canvas.SetSegmentColor(segment, 0, 200, 0, 255);
         canvas.DrawMesh(segment, ref vertices, ref normals, ref indices);
-
         commandSite.End3DDisplay();
- 
         isOutOfDate = false;
     }
-
-
     public void OnEscape() { commandSite.Terminate(); }
     public void OnComplete() { isOutOfDate = true; commandSite.InvalidateCanvas();
         commandSite.Terminate();
@@ -67,47 +60,38 @@ public class cmd1 : IAlibreAddOnCommand
     public void OnTerminate() { }
     public bool IsTwoWayToggle() => false;
     public void OnRender(int hDC, int x, int y, int w, int h) => throw new NotImplementedException();
-
     bool IAlibreAddOnCommand.OnClick(int screenX, int screenY, ADDONMouseButtons buttons)
     {
         throw new NotImplementedException();
     }
-
     bool IAlibreAddOnCommand.OnDoubleClick(int screenX, int screenY)
     {
         throw new NotImplementedException();
     }
-
     bool IAlibreAddOnCommand.OnMouseDown(int screenX, int screenY, ADDONMouseButtons buttons)
     {
         throw new NotImplementedException();
     }
-
     bool IAlibreAddOnCommand.OnMouseMove(int screenX, int screenY, ADDONMouseButtons buttons)
     {
         throw new NotImplementedException();
     }
-
     bool IAlibreAddOnCommand.OnMouseUp(int screenX, int screenY, ADDONMouseButtons buttons)
     {
         throw new NotImplementedException();
     }
-
     bool IAlibreAddOnCommand.OnKeyDown(int keycode)
     {
         throw new NotImplementedException();
     }
-
     bool IAlibreAddOnCommand.OnKeyUp(int keycode)
     {
         throw new NotImplementedException();
     }
-
     bool IAlibreAddOnCommand.OnEscape()
     {
         throw new NotImplementedException();
     }
-
     bool IAlibreAddOnCommand.OnMouseWheel(double delta)
     {
         throw new NotImplementedException();

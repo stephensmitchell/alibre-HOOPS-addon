@@ -6,6 +6,7 @@
 ## has more thorough IDE-specific entries.
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/Dotnet.gitignore
+AlibreX
 .vs
 .vshistory
 # Build results
@@ -23,32 +24,25 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
-
 # .NET Core
 project.lock.json
 project.fragment.lock.json
 artifacts/
-
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
-
 # NuGet Packages
 *.nupkg
 # NuGet Symbol Packages
 *.snupkg
-
 # Others
 ~$*
 *~
 CodeCoverage/
-
 # MSBuild Binary and Structured Log
 *.binlog
-
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
-
 # NUnit
 *.VisualState.xml
 TestResult.xml

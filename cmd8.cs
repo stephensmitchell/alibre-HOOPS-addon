@@ -3,23 +3,18 @@ using System.Windows;
 using System.IO;
 using System.Globalization; 
 using AlibreAddOn;
-
 public class cmd8 : IAlibreAddOnCommand
 {
     private IADAddOnCommandSite commandSite;
     private bool isOutOfDate = true;
-
-
     private float[] vertices = new float[] { -5, 0, 0, 5, 0, 0, 0, 5, 0 };
     private float[] normals = new float[] { 0, 0, 1, 0, 0, 1, 0, 0, 1 };
     private int[] displayIndices = new int[] { 3, 0, 1, 2 }; 
-
     public IADAddOnCommandSite CommandSite
     {
         get => commandSite;
         set => commandSite = value;
     }
-
     public void putref_CommandSite(IADAddOnCommandSite pSite)
     {
         commandSite = pSite;
@@ -27,12 +22,10 @@ public class cmd8 : IAlibreAddOnCommand
         if (isLegacy)
             throw new InvalidOperationException("");
     }
-
     public bool AddTab() => false;
     public string TabName => null;
     public Array Extents => null;
     public void OnShowUI(long hWnd) { }
-
     public void OnComplete()
     {
         isOutOfDate = true;
@@ -41,23 +34,18 @@ public class cmd8 : IAlibreAddOnCommand
     public void On3DRender()
     {
         if (!isOutOfDate) return;
-
         object canvasObj = commandSite.Begin3DDisplay(false);
         var canvas = (IADAddOnCanvasDisplay)canvasObj;
-
         DrawPreviewTriangle(canvas);
-
         commandSite.End3DDisplay();
         isOutOfDate = false;
     }
-
     private void DrawPreviewTriangle(IADAddOnCanvasDisplay canvas)
     {
         Array transform = new double[] { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 };
         Array verts = vertices;
         Array norms = normals;
         Array inds = displayIndices;
-
         long segment = canvas.AddSubSegment(0, "HOOPS_Preview_Triangle");
         canvas.SetSegmentTransform(segment, true, ref transform);
         canvas.SetSegmentColor(segment, 255, 128, 0, 255); // Orange
@@ -70,18 +58,15 @@ public class cmd8 : IAlibreAddOnCommand
             "Generate Geometry", 
             MessageBoxButton.YesNo, 
             MessageBoxImage.Question);
-
         if (result == MessageBoxResult.Yes)
         {
             GenerateAndImportTriangle();
             OnEscape();
         }
     }
-
     private void GenerateAndImportTriangle()
     {
         string stlPath = Path.Combine(Path.GetTempPath(), "alibre_addon_mesh.stl");
-        
         try
         {
             using (StreamWriter writer = new StreamWriter(stlPath))
@@ -109,8 +94,6 @@ public class cmd8 : IAlibreAddOnCommand
             }
         }
     }
-
-
     public void OnEscape()
     {
         commandSite.Override3DRender(false);
@@ -167,6 +150,4 @@ public class cmd8 : IAlibreAddOnCommand
     {
         throw new NotImplementedException();
     }
-
- 
 }

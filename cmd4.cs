@@ -2,27 +2,23 @@ using System;
 using System.Windows.Forms;
 using AlibreAddOn;
 using AlibreX;
-
 public class cmd4 : IAlibreAddOnCommand
 {
     private IADAddOnCommandSite commandSite;
     private bool isOutOfDate = true;
     private double triangleOffsetX = 0;
     private Timer _timer;
-
     public IADAddOnCommandSite CommandSite
     {
         get => commandSite;
         set => commandSite = value;
     }
-
     public void putref_CommandSite(IADAddOnCommandSite pSite)
     {
         commandSite = pSite;
         if (commandSite.LegacyRenderingEngine())
             throw new InvalidOperationException("HOOPS");
     }
-
     public void OnShowUI(long hWnd)
     {
         _timer = new Timer();
@@ -35,17 +31,13 @@ public class cmd4 : IAlibreAddOnCommand
         };
         _timer.Start();
     }
-
     public void On3DRender()
     {
         if (!isOutOfDate) return;
-
         var canvas = (IADAddOnCanvasDisplay)commandSite.Begin3DDisplay(false);
-
         float[] vertices = { -10, 0, 0, 10, 0, 0, 0, 10, 0 };
         float[] normals = { 0, 0, 1, 0, 0, 1, 0, 0, 1 };
         int[] indices = { 3, 0, 1, 2 };
-
         Array v = vertices, n = normals, i = indices;
         double[] staticTransform = {
             1, 0, 0,
@@ -69,11 +61,9 @@ public class cmd4 : IAlibreAddOnCommand
         canvas.SetSegmentTransform(s2, true, ref t2);
         canvas.SetSegmentColor(s2, 255, 100, 100, 255);
         canvas.DrawMesh(s2, ref v, ref n, ref i);
-
         commandSite.End3DDisplay();
         isOutOfDate = false;
     }
-
     public void OnKeyDown(int key)
     {
         if (key == 39) // VK_RIGHT
@@ -83,13 +73,11 @@ public class cmd4 : IAlibreAddOnCommand
             commandSite.InvalidateCanvas();
         }
     }
-
     public void OnEscape()
     {
         _timer?.Stop();
         commandSite.Terminate();
     }
-
     public void OnComplete()
     {
         _timer?.Stop();
@@ -97,7 +85,6 @@ public class cmd4 : IAlibreAddOnCommand
         commandSite.InvalidateCanvas();
         commandSite.Terminate();
     }
-
     public bool AddTab() => false;
     public string TabName => null;
     public Array Extents => null;
@@ -112,47 +99,38 @@ public class cmd4 : IAlibreAddOnCommand
     public void OnSelectionChange() { }
     public void OnTerminate() { }
     public bool IsTwoWayToggle() => false;
-
     bool IAlibreAddOnCommand.OnClick(int screenX, int screenY, ADDONMouseButtons buttons)
     {
         throw new NotImplementedException();
     }
-
     bool IAlibreAddOnCommand.OnDoubleClick(int screenX, int screenY)
     {
         throw new NotImplementedException();
     }
-
     bool IAlibreAddOnCommand.OnMouseDown(int screenX, int screenY, ADDONMouseButtons buttons)
     {
         throw new NotImplementedException();
     }
-
     bool IAlibreAddOnCommand.OnMouseMove(int screenX, int screenY, ADDONMouseButtons buttons)
     {
         throw new NotImplementedException();
     }
-
     bool IAlibreAddOnCommand.OnMouseUp(int screenX, int screenY, ADDONMouseButtons buttons)
     {
         throw new NotImplementedException();
     }
-
     bool IAlibreAddOnCommand.OnKeyDown(int keycode)
     {
         throw new NotImplementedException();
     }
-
     bool IAlibreAddOnCommand.OnKeyUp(int keycode)
     {
         throw new NotImplementedException();
     }
-
     bool IAlibreAddOnCommand.OnEscape()
     {
         throw new NotImplementedException();
     }
-
     bool IAlibreAddOnCommand.OnMouseWheel(double delta)
     {
         throw new NotImplementedException();
